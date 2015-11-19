@@ -6,10 +6,10 @@ module.exports = function (spawner) {
             var creep = Game.creeps[name];
 
             counts.total++;
-            if (counts[creep.role]) {
-                counts[creep.role]++;
+            if (counts[creep.memory.role]) {
+                counts[creep.memory.role]++;
             } else {
-                counts[creep.role] = 1;
+                counts[creep.memory.role] = 1;
             }
         }
 
@@ -17,12 +17,15 @@ module.exports = function (spawner) {
         var body = [WORK, CARRY, MOVE];
         if (!counts.harvester) {
             role = 'harvester';
+        } else if (!counts.guard || counts.total / 4 > counts.guard) {
+            role = 'guard';
+            body = [ATTACK, TOUGH, MOVE];
         } else if (!counts.builder) {
             role = 'builder';
         } else if (!counts.boss) {
             role = 'boss';
         }
-
+        
         spawner.createCreep(body, role + counts.total, { role: role });
     }
 }
