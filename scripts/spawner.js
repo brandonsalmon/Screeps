@@ -1,5 +1,5 @@
 module.exports = function (spawner) {
-    if (spawner.energy == spawner.energyCapacity) {
+    if (spawner.energy >= 200) {
         // Count creeps
         var counts = { total: 0 };
         for (var name in Game.creeps) {
@@ -17,15 +17,15 @@ module.exports = function (spawner) {
         var body = [WORK, CARRY, MOVE];
         if (!counts.harvester) {
             role = 'harvester';
-        } else if (!counts.guard || counts.total / 4 > counts.guard) {
+        } else if (!counts.guard || counts.total / 5 > counts.guard) {
             role = 'guard';
-            body = [ATTACK, TOUGH, MOVE];
-        } else if (!counts.builder) {
+            body = [RANGED_ATTACK, MOVE];
+        } else if (Math.floor(counts.total / 5) > (counts.builder || 0)) {
             role = 'builder';
-        } else if (!counts.boss) {
+        } else if (!counts.boss && counts.total >= 10) {
             role = 'boss';
         }
         
-        spawner.createCreep(body, role + counts.total, { role: role });
+        spawner.createCreep(body, null, { role: role });
     }
 }
